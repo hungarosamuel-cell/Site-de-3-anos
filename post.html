@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+  <title>Chegou o dia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Raleway:wght@200;300;400&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ============================================
+   VARIÁVEIS — edite aqui para personalizar
+   ============================================ */
+    :root {
+      --bg: #0b080e;
+      --rose: #c8527a;
+      --rose-light: #e589a8;
+      --cream: #f0e6d3;
+      --cream-muted: #9e8e82;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(200, 82, 122, 0.18);
+      --glow: rgba(200, 82, 122, 0.12);
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+    }
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      min-height: 100dvh;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    /* ============================================
+   ENTRY OVERLAY
+   ============================================ */
+    #entry-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      padding: 2rem calc(2rem + var(--sal)) calc(2rem + var(--sab)) calc(2rem + var(--sar));
+      transition: opacity 1.2s ease, visibility 1.2s ease;
+    }
+
+    #entry-overlay.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .entry-heart-wrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .entry-heart-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -18px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200, 82, 122, 0.22) 0%, transparent 68%);
+      animation: glow-pulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes glow-pulse {
+
+      0%,
+      100% {
+        transform: scale(0.9);
+        opacity: .55
+      }
+
+      50% {
+        transform: scale(1.2);
+        opacity: 1
+      }
+    }
+
+    #heart-svg {
+      animation: heartbeat 2s ease-in-out infinite;
+      filter: drop-shadow(0 0 10px rgba(200, 82, 122, .5));
+    }
+
+    @keyframes heartbeat {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      14% {
+        transform: scale(1.18)
+      }
+
+      28% {
+        transform: scale(1)
+      }
+
+      42% {
+        transform: scale(1.1)
+      }
+
+      56% {
+        transform: scale(1)
+      }
+    }
+
+    .entry-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.25rem;
+      color: var(--cream-muted);
+      letter-spacing: .2em;
+      text-align: center;
+      animation: fadeUp 1.2s ease .4s both;
+    }
+
+    .enter-btn {
+      min-height: 52px;
+      min-width: 180px;
+      background: transparent;
+      border: 1px solid rgba(200, 82, 122, .45);
+      color: var(--rose-light);
+      font-size: .7rem;
+      font-weight: 300;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      padding: 0 2.5rem;
+      cursor: pointer;
+      transition: background .3s, border-color .3s, color .3s, box-shadow .3s;
+      animation: fadeUp 1.2s ease .9s both;
+    }
+
+    .enter-btn:active,
+    .enter-btn:hover {
+      background: rgba(200, 82, 122, .14);
+      border-color: var(--rose);
+      color: var(--cream);
+      box-shadow: 0 0 22px var(--glow);
+    }
+
+
+
+    /* ============================================
+   MUSIC PLAYER — pill central no mobile
+   ============================================ */
+    #music-player {
+      position: fixed;
+      bottom: calc(1.2rem + var(--sab));
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      background: rgba(11, 8, 14, .88);
+      border: 1px solid var(--card-border);
+      padding: .6rem 1.4rem .6rem .85rem;
+      border-radius: 100px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity .7s, transform .7s;
+    }
+
+    #music-player.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #play-pause-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--rose-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 36px;
+      min-height: 36px;
+      padding: 0;
+      transition: color .2s;
+    }
+
+    #play-pause-btn:active {
+      color: var(--cream);
+    }
+
+    .song-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: .85rem;
+      color: var(--cream-muted);
+      letter-spacing: .06em;
+      user-select: none;
+    }
+
+    /* ============================================
+   MAIN
+   ============================================ */
+    #main {
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 1.2s ease .4s;
+    }
+
+    #main.show {
+      opacity: 1;
+    }
+
+    /* ============================================
+   HERO — mobile-first
+   ============================================ */
+    .hero {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: calc(3rem + var(--sat));
+      padding-bottom: 5rem;
+      gap: 0;
+    }
+
+    /* --- CARROSSEL --- */
+    .carousel-wrap {
+      width: 100%;
+      aspect-ratio: 3/4;
+      /* portrait 3:4 — encaixa perfeitamente */
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--card-border);
+      box-shadow: 0 8px 60px rgba(200, 82, 122, .07);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1.1s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide.on {
+      opacity: 1;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(.78) saturate(.82);
+      transition: transform 8s ease, filter .4s;
+    }
+
+    .slide.on img {
+      transform: scale(1.05);
+    }
+
+    .slide:not(.on) img {
+      transform: scale(1);
+    }
+
+    .slide-ph {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: .9rem;
+      color: rgba(255, 255, 255, .15);
+      letter-spacing: .14em;
+    }
+
+    /* gradiente base da foto */
+    .carousel-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      background: linear-gradient(to top, rgba(11, 8, 14, .85), transparent);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .c-arrows {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 .65rem;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .c-arrow {
+      pointer-events: all;
+      background: rgba(11, 8, 14, .5);
+      border: 1px solid rgba(200, 82, 122, .2);
+      color: var(--cream);
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      border-radius: 2px;
+      transition: background .2s, border-color .2s;
+    }
+
+    .c-arrow:active {
+      background: rgba(200, 82, 122, .3);
+      border-color: var(--rose);
+    }
+
+    .c-dots {
+      position: absolute;
+      bottom: .85rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: .5rem;
+      z-index: 3;
+    }
+
+    .c-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .c-dot::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .25);
+      transition: transform .3s, background .3s;
+    }
+
+    .c-dot.on::after {
+      background: var(--rose-light);
+      transform: scale(1.55);
+    }
+
+    /* POLAROID STAGE */
+.carousel-wrap {
+  width:100%; position:relative;
+  display:flex; align-items:center; justify-content:center;
+  padding:2.5rem 0 3.5rem;
+  min-height:calc(280px * 4/3 + 120px);
+}
+.carousel-wrap::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 45%, rgba(200,82,122,.09) 0%, transparent 70%);
+  pointer-events:none;
+}
+.slide { position:absolute; opacity:0; transition:opacity .9s ease, transform .9s ease; display:flex; align-items:center; justify-content:center; }
+.slide.on { opacity:1; z-index:1; }
+.slide:nth-child(1) .polaroid { transform:rotate(-2.8deg); }
+.slide:nth-child(2) .polaroid { transform:rotate(2.1deg);  }
+.slide:nth-child(3) .polaroid { transform:rotate(-1.4deg); }
+.slide:nth-child(4) .polaroid { transform:rotate(3deg);    }
+.slide:nth-child(5) .polaroid { transform:rotate(-2deg);   }
+.polaroid {
+  background:#f5ede0; padding:10px 10px 50px;
+  width:72vw; max-width:290px;
+  box-shadow: 0 4px 6px rgba(0,0,0,.25), 0 12px 40px rgba(0,0,0,.45), 0 0 60px rgba(200,82,122,.08);
+}
+.slide.on .polaroid { box-shadow: 0 6px 10px rgba(0,0,0,.3), 0 18px 55px rgba(0,0,0,.55), 0 0 80px rgba(200,82,122,.14); }
+.polaroid-img { width:100%; aspect-ratio:3/4; overflow:hidden; background:#ddd; }
+.polaroid-img img { width:100%; height:100%; object-fit:cover; filter:brightness(.88) saturate(.82) sepia(.1); transition:filter .4s; }
+.slide.on .polaroid-img img { filter:brightness(.92) saturate(.88) sepia(.06); }
+.polaroid-caption { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:.88rem; color:#6b4f3a; text-align:center; padding-top:10px; letter-spacing:.06em; line-height:1.4; user-select:none; }
+
+/* TIMER */
+.timer-wrap { width:100%; padding:2.2rem 1.5rem 0; display:flex; flex-direction:column; align-items:center; gap:1rem; }
+.timer-label-top { font-size:.62rem; font-weight:300; letter-spacing:.38em; text-transform:uppercase; color:var(--rose); }
+.timer-blocks { display:flex; align-items:center; gap:1.2rem; }
+.timer-block { display:flex; flex-direction:column; align-items:center; gap:.25rem; min-width:58px; }
+.timer-num { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:2.8rem; line-height:1; color:var(--cream); letter-spacing:-.02em; }
+.timer-unit { font-size:.58rem; font-weight:300; letter-spacing:.28em; text-transform:uppercase; color:var(--cream-muted); }
+.timer-sep { font-family:'Cormorant Garamond',serif; font-size:1.6rem; color:var(--rose); opacity:.5; margin-bottom:.8rem; user-select:none; }
+
+    /* --- TEXTO HERO --- */
+    .hero-txt {
+      width: 100%;
+      padding: 2rem 1.5rem 0;
+      text-align: center;
+    }
+
+    .label-sm {
+      display: block;
+      font-size: .62rem;
+      font-weight: 300;
+      letter-spacing: .38em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: .9rem;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 2.1rem;
+      line-height: 1.28;
+      color: var(--cream);
+      margin-bottom: 1.1rem;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--rose-light);
+    }
+
+    .hero-desc {
+      font-size: .88rem;
+      line-height: 1.95;
+      color: var(--cream-muted);
+      letter-spacing: .02em;
+    }
+
+    /* ============================================
+   DIVISOR
+   ============================================ */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 0 2rem;
+      margin: 3.5rem auto;
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .div-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--card-border), transparent);
+    }
+
+    .div-heart {
+      color: var(--rose);
+      font-size: .7rem;
+    }
+
+    /* ============================================
+   TIMELINE — coluna única (mobile)
+   ============================================ */
+    .timeline-sec {
+      padding: 0 0 6rem;
+    }
+
+    .tl-header {
+      text-align: center;
+      padding: 0 1.5rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .tl-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.75rem;
+      color: var(--cream);
+      line-height: 1.3;
+    }
+
+    .tl-wrap {
+      position: relative;
+      padding: 0 1.25rem 0 calc(1.25rem + 30px);
+    }
+
+    .tl-wrap::before {
+      content: '';
+      position: absolute;
+      left: calc(1.25rem + 9px);
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent 0%, var(--card-border) 5%, var(--card-border) 95%, transparent 100%);
+    }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+
+    .tl-item.in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tl-item::before {
+      content: '';
+      position: absolute;
+      left: -26px;
+      top: 1.55rem;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--rose);
+      box-shadow: 0 0 0 3px rgba(200, 82, 122, .14), 0 0 12px rgba(200, 82, 122, .4);
+      transition: box-shadow .3s;
+    }
+
+    .tl-item:hover::before {
+      box-shadow: 0 0 0 5px rgba(200, 82, 122, .2), 0 0 18px rgba(200, 82, 122, .6);
+    }
+
+    .tl-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      overflow: hidden;
+      transition: border-color .3s, box-shadow .3s;
+    }
+
+    .tl-card:active,
+    .tl-card:hover {
+      border-color: rgba(200, 82, 122, .32);
+      box-shadow: 0 0 32px rgba(200, 82, 122, .06);
+    }
+
+    .tl-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      background: rgba(200, 82, 122, .04);
+    }
+
+    .tl-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(.8) saturate(.8);
+      transition: filter .4s, transform .6s;
+    }
+
+    .tl-card:hover .tl-img img {
+      filter: brightness(.9) saturate(1);
+      transform: scale(1.04);
+    }
+
+    .tl-img-ph {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: .82rem;
+      color: rgba(200, 82, 122, .22);
+      letter-spacing: .12em;
+    }
+
+    .tl-body {
+      padding: 1.1rem 1.25rem 1.3rem;
+    }
+
+    .tl-date {
+      display: block;
+      font-size: .6rem;
+      font-weight: 300;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: .35rem;
+    }
+
+    .tl-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--cream);
+      margin-bottom: .55rem;
+      line-height: 1.3;
+    }
+
+    .tl-text {
+      font-size: .84rem;
+      line-height: 1.85;
+      color: var(--cream-muted);
+    }
+
+    /* ============================================
+   FOOTER
+   ============================================ */
+    .footer {
+      text-align: center;
+      padding: 3.5rem 2rem calc(4rem + var(--sab));
+      border-top: 1px solid var(--card-border);
+      position: relative;
+    }
+
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 1px;
+      background: var(--rose);
+    }
+
+    .footer-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 1.4rem;
+      line-height: 1.5;
+      color: var(--rose-light);
+      max-width: 340px;
+      margin: 0 auto 1.2rem;
+    }
+
+    .footer-sig {
+      font-size: .62rem;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: var(--cream-muted);
+    }
+
+    /* ============================================
+   ANIMAÇÕES
+   ============================================ */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* ============================================
+   TABLET ≥ 600px
+   ============================================ */
+    @media (min-width:600px) {
+      .entry-heart-wrap {
+        width: 140px;
+        height: 140px;
+      }
+
+      .entry-subtitle {
+        font-size: 1.45rem;
+      }
+
+      .carousel-wrap {
+        aspect-ratio: 3/4;
+        max-width: 480px;
+      }
+
+      .hero-title {
+        font-size: 2.6rem;
+      }
+
+      .hero-txt {
+        max-width: 560px;
+        padding: 2.5rem 2rem 0;
+      }
+
+      .tl-wrap {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 0 2rem 0 calc(2rem + 30px);
+      }
+
+      .tl-wrap::before {
+        left: calc(2rem + 9px);
+      }
+
+      .footer-quote {
+        font-size: 1.6rem;
+        max-width: 480px;
+      }
+    }
+
+    /* ============================================
+   DESKTOP ≥ 960px — 2 colunas na timeline
+   ============================================ */
+    @media (min-width:960px) {
+      #music-player {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        left: auto;
+        transform: translateY(20px);
+        border-radius: 0;
+      }
+
+      #music-player.show {
+        transform: translateY(0);
+      }
+
+      .hero {
+        min-height: 100vh;
+        justify-content: center;
+        padding-top: 4rem;
+        gap: 4rem;
+      }
+
+      .carousel-wrap {
+        max-width: 520px;
+        aspect-ratio: 3/4;
+      }
+
+      .hero-title {
+        font-size: 3.2rem;
+      }
+
+      .hero-txt {
+        max-width: 620px;
+        padding: 0;
+      }
+
+      /* Timeline 2 colunas */
+      .tl-wrap {
+        max-width: 940px;
+        padding: 0;
+      }
+
+      .tl-wrap::before {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .tl-item {
+        display: flex;
+        justify-content: flex-end;
+        padding-right: calc(50% + 3.2rem);
+        padding-left: 0;
+        transform: translateX(-24px);
+        margin-bottom: 4rem;
+      }
+
+      .tl-item.in {
+        transform: translateX(0);
+      }
+
+      .tl-item:nth-child(even) {
+        justify-content: flex-start;
+        padding-right: 0;
+        padding-left: calc(50% + 3.2rem);
+        transform: translateX(24px);
+      }
+
+      .tl-item:nth-child(even).in {
+        transform: translateX(0);
+      }
+
+      .tl-item::before,
+      .tl-item:nth-child(even)::before {
+        left: 50%;
+        transform: translateX(-50%);
+        top: 1.8rem;
+        width: 10px;
+        height: 10px;
+      }
+
+      .tl-header {
+        margin-bottom: 5rem;
+      }
+
+      .tl-title {
+        font-size: 2.4rem;
+      }
+
+      .footer-quote {
+        font-size: 1.9rem;
+        max-width: 600px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ENTRY OVERLAY -->
+  <div id="entry-overlay">
+    <div class="entry-heart-wrap">
+      <svg id="heart-svg" viewBox="0 0 100 88" width="110" height="97" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M50 82 C48 78 10 58 6 30 C4 14 16 4 28 4 C36 4 43 8 50 17 C57 8 64 4 72 4 C84 4 96 14 94 30 C90 58 52 78 50 82Z"
+          fill="none" stroke="rgba(200,82,122,0.42)" stroke-width="1.5" />
+        <path
+          d="M50 76 C48 72 14 54 12 30 C10 17 20 11 30 11 C38 11 44 15 50 24 C56 15 62 11 70 11 C80 11 90 17 88 30 C86 54 52 72 50 76Z"
+          fill="rgba(200,82,122,0.11)" />
+        <path
+          d="M50 68 C48 64 20 50 18 30 C17 20 25 16 33 16 C40 16 45 20 50 28 C55 20 60 16 67 16 C75 16 83 20 82 30 C80 50 52 64 50 68Z"
+          fill="rgba(200,82,122,0.06)" />
+        <path d="M28 12 C22 12 16 17 15 24" stroke="rgba(255,200,220,0.3)" stroke-width="2" fill="none"
+          stroke-linecap="round" />
+      </svg>
+    </div>
+
+    <p class="entry-subtitle">Feliz 3 anos!</p>
+    <button class="enter-btn" id="enter-btn">abrir ♥</button>
+  </div>
+
+  <div id="music-player">
+    <button id="play-pause-btn" aria-label="Tocar ou pausar música">
+      <svg id="ic-play" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+      <svg id="ic-pause" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="display:none">
+        <rect x="6" y="4" width="4" height="16" rx="1" />
+        <rect x="14" y="4" width="4" height="16" rx="1" />
+      </svg>
+    </button>
+    <span class="song-name">Nossa música</span>
+  </div>
+
+  <main id="main">
+    <section class="hero">
+    <!-- HERO -->
+    <!-- CARROSSEL POLAROID -->
+    <div class="carousel-wrap" id="carousel">
+
+      <div class="slide on">
+        <div class="polaroid">
+          <div class="polaroid-img"><img src="img/5°.jpeg"></div>
+          <div class="polaroid-caption">FELIZ</div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <div class="polaroid">
+          <div class="polaroid-img"><img src="img/12°.jpeg"></div>
+          <div class="polaroid-caption">3 ANOS</div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <div class="polaroid">
+          <div class="polaroid-img"><img src="img/10°.jpeg"></div>
+          <div class="polaroid-caption">JUNTOS</div>
+        </div>
+      </div>
+
+      <div class="c-dots" id="dots"></div>
+    </div>
+
+      <div class="hero-txt">
+        <span class="label-sm">Feliz dia 05/06!!!!</span>
+        <h1 class="hero-title">Nossos <em>3 anos!</em><br>de historia juntos chegou</h1>
+        <p class="hero-desc">Mesmo você bem lonzao de mim, sinto o nosso amor pelo os ares. Almejo que tenhamos muitos
+          anos para vim, independente das opniões dos outros. Espero que goste do meu presente supresa para esse dia
+          muito especial nosso!!</p>
+      </div>
+    </section>
+
+    <div class="divider">
+      <div class="div-line"></div><span class="div-heart">♥</span>
+      <div class="div-line"></div>
+    </div>
+
+    <!-- TIMELINE -->
+    <section class="timeline-sec">
+      <div class="tl-header">
+        <span class="label-sm">Se um dia alguem me perguntar para mim como é o nosso namoro,</span>
+        <!-- ✏️ título da seção -->
+        <h2 class="tl-title">Eu mostraria todos esses momentos nosso</h2>
+      </div>
+
+      <div class="tl-wrap" id="tl">
+
+        <div class="tl-item">
+          <div class="tl-card">
+            <div class="tl-img"><img src="img/1°.jpeg" alt="momento 1"></div>
+            <div class="tl-body">
+              <span class="tl-date">05/06/2023</span>
+              <h3 class="tl-name">Onde tudo começou</h3>
+              <p class="tl-text">Mal sabiamos que não seria um namoro que iria durar tanto tempo assim. Fomos as cegas,
+                primeiro românce verdadeiro de cada e deu tudo certo.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-card">
+            <div class="tl-img"><img src="img/13°.jpeg" alt="momento 2"> </div>
+            <div class="tl-body">
+              <span class="tl-date">06/09/2023</span>
+              <h3 class="tl-name">Nossa primeira "viagem" juntos</h3>
+              <p class="tl-text">Essa viagem foi muito especial para mim, foi quando a gente realmente saimos de perto
+                dos nossos pais e vivemos só nós por um momneto</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-card">
+            <div class="tl-img"><img src="img/3°.jpeg"></div>
+            <div class="tl-body">
+              <span class="tl-date">2024</span>
+              <h3 class="tl-name">Todas as vezes que eu acompanhei a sua trajetória</h3>
+              <p class="tl-text">Eu acho essa foto perfeita, em que todas as vezes eu vejo como você é forte e
+                resiliente para as suas coisas. Gosto dessa foto porque é um retrato de como que foi a sua caminhada</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-card">
+            <div class="tl-img"><img src="img/15°.jpeg"></div>
+            <div class="tl-body">
+              <span class="tl-date">08/12/2024</span>
+              <h3 class="tl-name">Tchau escola!</h3>
+              <p class="tl-text">Depois de anos, a escola acabou e só os de verdade ficaram, agora é a gente pela gente,
+                claro que ainda vai ter amigos proximos a nós, mas temos que focar em nósss</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-card">
+            <div class="tl-img"><img src="img/7°.jpeg"></div>
+            <div class="tl-body">
+              <span class="tl-date">07/09/2025</span>
+              <h3 class="tl-name">Nossa primeiras idas as baladas</h3>
+              <p class="tl-text">Olhando só para foto, não me impacta igual o valor que ela passa. Essa foto mostra que
+                temos que confiar um no outro, não somente em traição, mas sim em tudo</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-card">
+            <div class="tl-img"><img src="img/14°.jpeg"></div>
+            <div class="tl-body">
+              <span class="tl-date">09/09/2025</span>
+              <h3 class="tl-name">A formatura mais linda que eu vi!</h3>
+              <p class="tl-text">Uma das noites mais especial! Vi como e para que você se dedica tanto ao ballet, foi
+                perfeito e maravilhoso esse momento. Tenho o orgulho de falar para os outros que você é A MINHA
+                bailarina</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-card">
+            <div class="tl-img"><img src="img/6°.jpeg"></div>
+            <div class="tl-body">
+              <span class="tl-date">26/12/2025</span>
+              <h3 class="tl-name">VAI CORINTHIAS!🦅</h3>
+              <p class="tl-text">AMO ESSA FOTO! Ela mostra que mesmo tendo momentos/coisas que você não gosta, e você vê
+                que eu amo, você se doa e faz com que aquele momento seja especial!</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-card">
+            <div class="tl-img"><img src="img/8°.jpeg"></div>
+            <div class="tl-body">
+              <span class="tl-date">01/01/2026</span>
+              <h3 class="tl-name">Um dos melhores anos novos!</h3>
+              <p class="tl-text">Finamente viajamos para um lugar que queriamos, ainda não sozinhos, mas foi maravilhoso
+                essa viajem, passar todos esses momentos juntos e criar memórias inesquecíveis</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-card">
+            <div class="tl-img"><img src="img/11°.jpeg"></div>
+            <div class="tl-body">
+              <span class="tl-date">08/04/2026</span>
+              <h3 class="tl-name">Trabalhadores tem que curtir</h3>
+              <p class="tl-text">Chegou o momento mais temido por todos, somos universitários e trabalhadores KKKKKKK.
+                Fico muito feliz em que estamos partindo de um mesmo ponto e com o mesmo pensamento, vamos construir o
+                nosso futuro e curtir!</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-card">
+            <div class="tl-img"><img src="img/16°.jpeg"></div>
+            <div class="tl-body">
+              <span class="tl-date">16/04/2026</span>
+              <h3 class="tl-name">PRIMEIRA VIAJEM NOSSA SOZINHOS!</h3>
+              <p class="tl-text">Finalmente chegou o dia que eu mais queria, viajarmos sozinhos para qualquer canto por
+                ai, mas não foi qualquer lugar, foi já uma internacional até. Amei todos os momentos que a gente passou,
+                só faltou aquela coisa la... Mas eu amei toda a experiencia, como a gente comportou e ainda mais como a
+                gente se relacionou</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+<!-- TIMER -->
+<div class="timer-wrap">
+  <span class="timer-label-top">Faz</span>
+  <div class="timer-blocks">
+    <div class="timer-block">
+      <span class="timer-num" id="t-years">0</span>
+      <span class="timer-unit">ano</span>
+    </div>
+    <span class="timer-sep">·</span>
+    <div class="timer-block">
+      <span class="timer-num" id="t-months">0</span>
+      <span class="timer-unit">meses</span>
+    </div>
+    <span class="timer-sep">·</span>
+    <div class="timer-block">
+      <span class="timer-num" id="t-days">0</span>
+      <span class="timer-unit">dias</span>
+    </div>
+  </div>
+  <span class="timer-label-top">Que estamos juntos</span>
+</div>
+
+<p><br></p>
+
+    <footer class="footer">
+      <p class="footer-quote">Te amo mil milhões e é realy!</p>
+      <p class="footer-sig">com amor, Samuka! &nbsp;♥&nbsp; 2026</p>
+    </footer>
+
+  </main>
+
+  <script>
+    /* CAROUSEL + SWIPE */
+    const slides = document.querySelectorAll('#carousel .slide');
+    const dotsEl = document.getElementById('dots');
+    let cur = 0, autoT;
+
+    slides.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'c-dot' + (i === 0 ? ' on' : '');
+      d.setAttribute('aria-label', 'Slide ' + (i + 1));
+      d.onclick = () => { clearInterval(autoT); goTo(i); tick(); };
+      dotsEl.appendChild(d);
+    });
+
+    function goTo(n) {
+      slides[cur].classList.remove('on'); dotsEl.children[cur].classList.remove('on');
+      cur = (n + slides.length) % slides.length;
+      slides[cur].classList.add('on'); dotsEl.children[cur].classList.add('on');
+    }
+    function tick() { autoT = setInterval(() => goTo(cur + 1), 5000); }
+
+    /* Swipe touch */
+    let tx0 = null;
+    const car = document.getElementById('carousel');
+    car.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
+    car.addEventListener('touchend', e => {
+      if (tx0 === null) return;
+      const dx = e.changedTouches[0].clientX - tx0;
+      if (Math.abs(dx) > 40) { clearInterval(autoT); goTo(cur + (dx < 0 ? 1 : -1)); tick(); }
+      tx0 = null;
+    });
+
+    /* ENTRY */
+    const overlay = document.getElementById('entry-overlay');
+    const mainEl = document.getElementById('main');
+    const playerEl = document.getElementById('music-player');
+
+    document.getElementById('enter-btn').addEventListener('click', () => {
+      overlay.classList.add('hide');
+      mainEl.classList.add('show');
+      playerEl.classList.add('show');
+      initAudio(); tick();
+      setTimeout(() => overlay.style.display = 'none', 1400);
+    });
+
+/* TIMER — desde 05/06/2023 */
+(function calcTimer(){
+  const start = new Date(2023, 5, 5); /* mês 5 = junho (0-indexed) */
+  const now   = new Date();
+  let y = now.getFullYear() - start.getFullYear();
+  let m = now.getMonth()    - start.getMonth();
+  let d = now.getDate()     - start.getDate();
+  if(d < 0){ m--; d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+  if(m < 0){ y--; m += 12; }
+  document.getElementById('t-years').textContent  = y;
+  document.getElementById('t-months').textContent = m;
+  document.getElementById('t-days').textContent   = d;
+})();
+
+    const audio = new Audio('sou teu fa.mp3');
+    audio.loop = true;
+    audio.volume = 0.6;
+
+    let playing = false;
+
+    function initAudio() {
+      audio.play()
+        .then(() => { playing = true; updBtn(); })
+        .catch(() => { /* autoplay bloqueado — aguarda o clique no play */ });
+    }
+
+    document.getElementById('play-pause-btn').addEventListener('click', () => {
+      if (playing) { audio.pause(); playing = false; }
+      else { audio.play(); playing = true; }
+      updBtn();
+    });
+
+    function updBtn() {
+      document.getElementById('ic-play').style.display = playing ? 'none' : 'block';
+      document.getElementById('ic-pause').style.display = playing ? 'block' : 'none';
+    }
+
+    /* TIMELINE REVEAL */
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: .12 });
+    document.querySelectorAll('.tl-item').forEach(el => obs.observe(el));
+  </script>
+</body>
+
+</html>
